@@ -1,0 +1,3 @@
+rootProject.name = 'spring-batch-elasticsearch'
+include 'spring-batch-elasticsearch-reader'
+
