@@ -1,5 +1,8 @@
 package org.springframework.batch.item.elasticsearch.reader;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
@@ -21,16 +24,22 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
     private final SearchSourceBuilder searchSourceBuilder;
 
+    private final ObjectMapper objectMapper = new ObjectMapper()
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+    private final Class<T> domainClass;
+
     private final String[] indices;
 
     private Object[] sortValues;
 
     public ElasticsearchPagingItemReader(RestHighLevelClient restHighLevelClient, int pageSize,
-                                         SearchSourceBuilder searchSourceBuilder, String... indices) {
+                                         SearchSourceBuilder searchSourceBuilder, Class<T> domainClass, String... indices) {
         setName(ClassUtils.getShortName(getClass()));
         setPageSize(pageSize);
         this.restHighLevelClient = restHighLevelClient;
         this.searchSourceBuilder = searchSourceBuilder.size(pageSize);
+        this.domainClass = domainClass;
         this.indices = indices;
     }
 
@@ -42,13 +51,24 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
         initResults();
         try {
             SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
+            SearchHit[] hits = searchResponse.getHits().getHits();
 
-            for (SearchHit hit : searchResponse.getHits().getHits()) {
-                sortValues = hit.getSortValues();
-                results.add((T) hit);
+            if (hits.length > 0) {
+                for (SearchHit hit : hits) {
+                    results.add(deserialize(hit));
+                }
+                sortValues = hits[hits.length - 1].getSortValues();
             }
         } catch (IOException e) {
             throw new ElasticsearchException(e);
+        }
+    }
+
+    private T deserialize(SearchHit searchHit) {
+        try {
+            return objectMapper.readValue(searchHit.getSourceAsString(), domainClass);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 
