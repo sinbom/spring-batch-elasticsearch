@@ -33,12 +33,12 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
     private Object[] sortValues;
 
-    public ElasticsearchPagingItemReader(RestHighLevelClient restHighLevelClient, int pageSize,
-                                         SearchSourceBuilder searchSourceBuilder, Class<T> domainClass, String... indices) {
+    public ElasticsearchPagingItemReader(RestHighLevelClient restHighLevelClient, SearchSourceBuilder searchSourceBuilder,
+                                         Class<T> domainClass, String... indices) {
         setName(ClassUtils.getShortName(getClass()));
-        setPageSize(pageSize);
+        setPageSize(searchSourceBuilder.size());
         this.restHighLevelClient = restHighLevelClient;
-        this.searchSourceBuilder = searchSourceBuilder.size(pageSize);
+        this.searchSourceBuilder = searchSourceBuilder;
         this.domainClass = domainClass;
         this.indices = indices;
     }

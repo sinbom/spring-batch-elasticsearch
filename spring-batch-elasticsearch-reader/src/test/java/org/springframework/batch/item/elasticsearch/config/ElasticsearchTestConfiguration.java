@@ -1,4 +1,4 @@
-package org.springframework.batch.item.elasticsearch;
+package org.springframework.batch.item.elasticsearch.config;
 
 import org.apache.http.HttpHost;
 import org.apache.http.auth.AuthScope;

@@ -12,7 +12,7 @@ import org.elasticsearch.common.xcontent.XContentFactory;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
-import org.springframework.batch.item.elasticsearch.ElasticsearchTestConfiguration;
+import org.springframework.batch.item.elasticsearch.config.ElasticsearchTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Disabled
 @SpringBootTest(classes = ElasticsearchTestConfiguration.class)
-public abstract class ElasticsearchTestBase {
+public abstract class ElasticsearchTestContext {
 
     @Autowired
     protected RestHighLevelClient restHighLevelClient;
