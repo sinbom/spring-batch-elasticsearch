@@ -10,6 +10,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.junit.jupiter.api.Test;
+import org.springframework.batch.item.elasticsearch.ElasticsearchTestContext;
 import org.springframework.batch.item.elasticsearch.TestDomain;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

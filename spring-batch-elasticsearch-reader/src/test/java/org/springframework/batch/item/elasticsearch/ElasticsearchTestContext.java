@@ -1,4 +1,4 @@
-package org.springframework.batch.item.elasticsearch.reader;
+package org.springframework.batch.item.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

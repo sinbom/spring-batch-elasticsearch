@@ -43,7 +43,6 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
         this.indices = indices;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     protected void doReadPage() {
         SearchRequest searchRequest = createQuery();
@@ -86,6 +85,7 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
         super.afterPropertiesSet();
         Assert.notNull(restHighLevelClient, "restHighLevelClient is must be not null");
         Assert.notNull(searchSourceBuilder, "searchSourceBuilder is must be not null");
+        Assert.notNull(domainClass, "domain class is must be not null");
         Assert.notEmpty(indices, "index names is must be not empty");
         Assert.notEmpty(searchSourceBuilder.sorts(), "sort key is must be not empty");
     }
