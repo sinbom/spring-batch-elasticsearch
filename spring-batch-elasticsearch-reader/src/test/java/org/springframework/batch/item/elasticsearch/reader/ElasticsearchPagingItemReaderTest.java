@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.elasticsearch.ElasticsearchTestContext;
 import org.springframework.batch.item.elasticsearch.TestDomain;
 
+import java.time.LocalDateTime;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -23,9 +25,9 @@ public class ElasticsearchPagingItemReaderTest extends ElasticsearchTestContext 
         // given
         int chunkSize = 1;
         String indexName = "test";
-        TestDomain expected = new TestDomain("test", 1);
-        TestDomain expected2 = new TestDomain("test2", 2);
-        TestDomain expected3 = new TestDomain("test3", 3);
+        TestDomain expected = new TestDomain("test", 1, LocalDateTime.now());
+        TestDomain expected2 = new TestDomain("test2", 2, LocalDateTime.now());
+        TestDomain expected3 = new TestDomain("test3", 3, LocalDateTime.now());
         IndexRequest indexRequest = new IndexRequest(indexName)
                 .source(objectMapper.writeValueAsString(expected), XContentType.JSON);
         IndexRequest indexRequest2 = new IndexRequest(indexName)
@@ -66,9 +68,9 @@ public class ElasticsearchPagingItemReaderTest extends ElasticsearchTestContext 
         // given
         int chunkSize = 1;
         String indexName = "test";
-        TestDomain expected = new TestDomain("test", 1);
-        TestDomain expected2 = new TestDomain("test2", 2);
-        TestDomain expected3 = new TestDomain("test3", 3);
+        TestDomain expected = new TestDomain("test", 1, LocalDateTime.now());
+        TestDomain expected2 = new TestDomain("test2", 2, LocalDateTime.now());
+        TestDomain expected3 = new TestDomain("test3", 3, LocalDateTime.now());
         IndexRequest indexRequest = new IndexRequest(indexName)
                 .source(objectMapper.writeValueAsString(expected), XContentType.JSON);
         IndexRequest indexRequest2 = new IndexRequest(indexName)

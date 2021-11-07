@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.batch.item.elasticsearch.ElasticsearchTestContext;
 import org.springframework.batch.item.elasticsearch.TestDomain;
 
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -23,9 +24,9 @@ public class ElasticsearchBulkItemWriterTest extends ElasticsearchTestContext {
     public void writer가_정상적으로_값을저장한다() throws Exception {
         // given
         String indexName = "test";
-        TestDomain expected = new TestDomain("test", 1);
-        TestDomain expected2 = new TestDomain("test2", 2);
-        TestDomain expected3 = new TestDomain("test3", 3);
+        TestDomain expected = new TestDomain("test", 1, LocalDateTime.now());
+        TestDomain expected2 = new TestDomain("test2", 2, LocalDateTime.now());
+        TestDomain expected3 = new TestDomain("test3", 3, LocalDateTime.now());
         List<TestDomain> expectedItems = Arrays.asList(
                 expected,
                 expected2,

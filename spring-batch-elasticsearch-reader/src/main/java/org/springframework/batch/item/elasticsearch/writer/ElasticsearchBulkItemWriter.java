@@ -2,6 +2,7 @@ package org.springframework.batch.item.elasticsearch.writer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
@@ -23,7 +24,8 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
     private final RestHighLevelClient restHighLevelClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .registerModule(new JavaTimeModule());
 
     private final Class<T> domainClass;
 

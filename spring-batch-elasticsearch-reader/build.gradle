@@ -7,6 +7,7 @@ jar {
 }
 
 dependencies {
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
     implementation 'org.elasticsearch.client:elasticsearch-rest-high-level-client:7.10.1'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     testImplementation 'org.testcontainers:elasticsearch:1.15.3'
