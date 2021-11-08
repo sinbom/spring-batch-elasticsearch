@@ -10,10 +10,13 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.elasticsearch.TestDomain;
+import org.springframework.batch.item.elasticsearch.TestMigrationDomain;
 import org.springframework.batch.item.elasticsearch.reader.ElasticsearchPagingItemReader;
+import org.springframework.batch.item.elasticsearch.writer.ElasticsearchBulkItemWriter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -53,13 +56,14 @@ public class ElasticsearchPagingItemReaderConfiguration {
     public Step step() {
         return stepBuilderFactory
                 .get(JOB_NAME + "Step")
-                .<TestDomain, TestDomain>chunk(chunkSize)
+                .<TestDomain, TestMigrationDomain>chunk(chunkSize)
                 .reader(reader())
                 .processor(processor())
                 .writer(writer())
                 .build();
     }
 
+    @StepScope
     @Bean(JOB_NAME + "Reader")
     public ElasticsearchPagingItemReader<TestDomain> reader() {
         return new ElasticsearchPagingItemReader<>(
@@ -67,21 +71,29 @@ public class ElasticsearchPagingItemReaderConfiguration {
                 SearchSourceBuilder
                         .searchSource()
                         .size(chunkSize)
-                        .query(QueryBuilders.matchAllQuery())
+                        .query(
+                                QueryBuilders
+                                        .rangeQuery("created")
+                                        .gte(jobParameter.getCreated())
+                        )
                         .sort("name", SortOrder.ASC),
                 TestDomain.class,
                 "test"
         );
     }
 
-    private ItemProcessor<TestDomain, TestDomain> processor() {
-        return item -> item;
+    private ItemProcessor<TestDomain, TestMigrationDomain> processor() {
+        return TestMigrationDomain::new;
     }
 
     @Bean(JOB_NAME + "Writer")
-    public ItemWriter<TestDomain> writer() {
-        return item -> {
-        };
+    public ItemWriter<TestMigrationDomain> writer() {
+        return new ElasticsearchBulkItemWriter<>(
+                restHighLevelClient,
+                TestMigrationDomain.class,
+                "test_migration"
+        )
+                .waitUntil(true);
     }
 
 }
