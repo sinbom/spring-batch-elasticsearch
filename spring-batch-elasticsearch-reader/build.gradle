@@ -12,6 +12,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-batch'
     testImplementation 'org.testcontainers:elasticsearch:1.15.3'
     testImplementation 'org.elasticsearch:jna:5.7.0-1'
+    testImplementation 'com.h2database:h2'
     testImplementation 'org.springframework.batch:spring-batch-test'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

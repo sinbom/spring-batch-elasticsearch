@@ -3,6 +3,7 @@ package org.springframework.batch.item.elasticsearch.reader;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequest;
@@ -27,6 +28,7 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
     private final ObjectMapper objectMapper = new ObjectMapper()
             .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
             .registerModule(new JavaTimeModule());
 
     private final Class<T> domainClass;
@@ -78,8 +80,7 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
             searchSourceBuilder.searchAfter(sortValues);
         }
 
-        return new SearchRequest(indices)
-                .source(searchSourceBuilder);
+        return new SearchRequest(indices, searchSourceBuilder);
     }
 
     @Override

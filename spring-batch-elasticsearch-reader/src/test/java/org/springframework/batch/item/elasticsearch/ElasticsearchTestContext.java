@@ -1,8 +1,6 @@
 package org.springframework.batch.item.elasticsearch;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -29,9 +27,8 @@ public abstract class ElasticsearchTestContext {
     @Autowired
     protected RestHighLevelClient restHighLevelClient;
 
-    protected ObjectMapper objectMapper = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            .registerModule(new JavaTimeModule());
+    @Autowired
+    protected ObjectMapper objectMapper;
 
     @BeforeAll
     public static void putIndexTemplate(@Autowired RestHighLevelClient restHighLevelClient) throws IOException {
@@ -44,6 +41,9 @@ public abstract class ElasticsearchTestContext {
                 .endObject()
                 .startObject("age")
                 .field("type", "integer")
+                .endObject()
+                .startObject("created")
+                .field("type", "date")
                 .endObject()
                 .endObject()
                 .endObject();
