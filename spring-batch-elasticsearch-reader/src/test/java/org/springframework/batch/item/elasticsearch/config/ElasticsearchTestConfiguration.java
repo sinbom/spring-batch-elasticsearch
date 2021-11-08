@@ -28,21 +28,19 @@ public class ElasticsearchTestConfiguration {
 
     private static final String ELASTICSEARCH_DOCKER_IMAGE = "docker.elastic.co/elasticsearch/elasticsearch";
 
-    private final ElasticsearchContainer elasticsearchContainer;
+    private static final ElasticsearchContainer ELASTICSEARCH_CONTAINER;
 
-    public ElasticsearchTestConfiguration() {
-        this.elasticsearchContainer = createElasticsearchContainer();
-        this.elasticsearchContainer.start();
+    static {
+        ELASTICSEARCH_CONTAINER = createElasticsearchContainer();
+        ELASTICSEARCH_CONTAINER.start();
     }
 
-    private ElasticsearchContainer createElasticsearchContainer() {
-        DockerImageName dockerImageName = createDockerImage();
-
-        return new ElasticsearchContainer(dockerImageName)
+    private static ElasticsearchContainer createElasticsearchContainer() {
+        return new ElasticsearchContainer(createDockerImage())
                 .withPassword(PASSWORD);
     }
 
-    private DockerImageName createDockerImage() {
+    private static DockerImageName createDockerImage() {
         return DockerImageName
                 .parse(ELASTICSEARCH_DOCKER_IMAGE)
                 .withTag(ELASTICSEARCH_VERSION);
@@ -59,10 +57,9 @@ public class ElasticsearchTestConfiguration {
 
     @Bean
     public RestHighLevelClient createRestHighLevelClient() {
-        CredentialsProvider credentialsProvider = createCredentialsProvider();
         RestClientBuilder restClientBuilder = RestClient
-                .builder(HttpHost.create(elasticsearchContainer.getHttpHostAddress()))
-                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(credentialsProvider));
+                .builder(HttpHost.create(ELASTICSEARCH_CONTAINER.getHttpHostAddress()))
+                .setHttpClientConfigCallback(httpClientBuilder -> httpClientBuilder.setDefaultCredentialsProvider(createCredentialsProvider()));
 
         return new RestHighLevelClient(restClientBuilder);
     }
