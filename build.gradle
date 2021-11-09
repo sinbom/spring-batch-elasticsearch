@@ -1,12 +1,19 @@
-import org.springframework.boot.gradle.plugin.SpringBootPlugin
-
-plugins {
-    id 'org.springframework.boot' version '2.5.6'
-    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
+buildscript {
+    ext {
+        springBootVersion = '2.5.6'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath 'org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.3'
+    }
 }
 
 allprojects {
+    apply plugin: 'com.github.kt3k.coveralls'
+    apply plugin: 'jacoco'
     repositories {
         mavenCentral()
         jcenter()
@@ -32,9 +39,26 @@ subprojects {
         testCompileOnly 'org.projectlombok:lombok'
     }
 
-    dependencyManagement {
-        imports {
-            mavenBom SpringBootPlugin.BOM_COORDINATES
+    jacocoTestReport {
+        reports {
+            html.enabled = true
+            xml.enabled = true
         }
     }
+}
+
+task jacocoRootReport(type: JacocoReport) {
+    description = 'Generates an aggregate report from all subprojects'
+    sourceDirectories.setFrom(files(subprojects.sourceSets.main.allSource.srcDirs))
+    classDirectories.setFrom(files(subprojects.sourceSets.main.output))
+    executionData.setFrom(files(subprojects.jacocoTestReport.executionData))
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+}
+
+coveralls {
+    sourceDirs = subprojects.sourceSets.main.allSource.srcDirs.flatten()
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoRootReport/jacocoRootReport.xml"
 }
