@@ -12,6 +12,7 @@ import org.springframework.batch.core.configuration.annotation.JobScope;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.item.ItemProcessor;
+import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.elasticsearch.TestDomain;
 import org.springframework.batch.item.elasticsearch.TestMigrationDomain;
@@ -65,7 +66,7 @@ public class ElasticsearchPagingItemReaderConfiguration {
 
     @StepScope
     @Bean(JOB_NAME + "Reader")
-    public ElasticsearchPagingItemReader<TestDomain> reader() {
+    public ItemReader<TestDomain> reader() {
         return new ElasticsearchPagingItemReader<>(
                 restHighLevelClient,
                 SearchSourceBuilder

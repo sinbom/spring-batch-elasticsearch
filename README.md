@@ -42,11 +42,13 @@ dependencies {
 </dependency>
 ```
 
-## ElasticsearchPagingItemReader
+## Guide
+
+### ElasticsearchPagingItemReader
 
 ```java
 @Bean
-public ElasticsearchPagingItemReader<TestDomain> reader() {
+public ItemReader<Domain> reader() {
     return new ElasticsearchPagingItemReader<>(
             restHighLevelClient,
             SearchSourceBuilder
@@ -60,11 +62,11 @@ public ElasticsearchPagingItemReader<TestDomain> reader() {
 }
 ```
 
-## ElasticsearchBulkItemWriter
+### ElasticsearchBulkItemWriter
 
 ```java
 @Bean
-public ItemWriter<TestMigrationDomain> writer() {
+public ItemWriter<Domain> writer() {
     return new ElasticsearchBulkItemWriter<>(
             restHighLevelClient,
             Domain.class,
