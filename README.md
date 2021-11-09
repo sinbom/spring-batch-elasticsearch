@@ -2,6 +2,7 @@
 
 [![Build Status](https://app.travis-ci.com/sinbom/spring-batch-elasticsearch.svg?branch=master)](https://app.travis-ci.com/sinbom/spring-batch-elasticsearch)
 [![Dependency Status](https://jitpack.io/v/sinbom/spring-batch-elasticsearch.svg)](https://jitpack.io/#sinbom/spring-batch-elasticsearch)
+[![Coverage Status](https://coveralls.io/repos/github/sinbom/spring-batch-elasticsearch/badge.svg?branch=master)](https://coveralls.io/github/sinbom/spring-batch-elasticsearch?branch=master)
 
 ## Requires
 
