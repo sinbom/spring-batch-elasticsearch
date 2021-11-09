@@ -28,7 +28,7 @@ subprojects {
     apply plugin: 'io.spring.dependency-management'
 
     group = 'com.sinbom'
-    version = '0.0.4'
+    version = '1.0.0'
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 

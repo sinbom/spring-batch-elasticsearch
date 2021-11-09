@@ -22,7 +22,7 @@ allprojects {
 }
 
 dependencies {
-    implementation 'com.github.sinbom:spring-batch-elasticsearch:master-SNAPSHOT'
+    implementation 'com.github.sinbom:spring-batch-elasticsearch:1.0.0'
 }
 ```
 
@@ -38,7 +38,7 @@ dependencies {
 <dependency>
     <groupId>com.github.sinbom</groupId>
     <artifactId>spring-batch-elasticsearch</artifactId>
-    <version>master-SNAPSHOT</version>
+    <version>1.0.0</version>
 </dependency>
 ```
 

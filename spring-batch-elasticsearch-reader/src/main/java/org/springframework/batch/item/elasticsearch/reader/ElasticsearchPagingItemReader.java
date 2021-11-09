@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.elasticsearch.ElasticsearchException;
 import org.elasticsearch.action.search.SearchRequest;
-import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
 import org.elasticsearch.search.SearchHit;
@@ -53,8 +52,10 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
         initResults();
         try {
-            SearchResponse searchResponse = restHighLevelClient.search(searchRequest, RequestOptions.DEFAULT);
-            SearchHit[] hits = searchResponse.getHits().getHits();
+            SearchHit[] hits = restHighLevelClient
+                    .search(searchRequest, RequestOptions.DEFAULT)
+                    .getHits()
+                    .getHits();
 
             if (hits.length > 0) {
                 for (SearchHit hit : hits) {
