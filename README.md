@@ -1,6 +1,7 @@
 # Spring Batch ElasticsearchItemReader & Writer
 
-[![](https://jitpack.io/v/sinbom/spring-batch-elasticsearch.svg)](https://jitpack.io/#sinbom/spring-batch-elasticsearch)
+[![Build Status](https://app.travis-ci.com/sinbom/spring-batch-elasticsearch.svg?branch=master)](https://app.travis-ci.com/sinbom/spring-batch-elasticsearch)
+[![Dependency Status](https://jitpack.io/v/sinbom/spring-batch-elasticsearch.svg)](https://jitpack.io/#sinbom/spring-batch-elasticsearch)
 
 ## Requires
 
