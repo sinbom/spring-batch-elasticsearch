@@ -4,6 +4,7 @@ bootJar {
 
 jar {
     enabled = true
+    archiveClassifier.set('')
 }
 
 dependencies {
