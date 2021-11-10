@@ -32,8 +32,6 @@ public class ElasticsearchPagingItemReaderConfigurationTest extends Elasticsearc
     public void 정상적으로_값을읽어_이관한다() throws Exception {
         // given
         LocalDate created = LocalDate.of(1996, 9, 17);
-        String indexName = "test";
-        String migratedIndexName = "test";
         TestDomain expected = new TestDomain("test", 1, LocalDateTime.now());
         TestDomain expected2 = new TestDomain("test2", 2, LocalDateTime.now());
         TestDomain expected3 = new TestDomain("test3", 3, LocalDateTime.now());
@@ -47,7 +45,7 @@ public class ElasticsearchPagingItemReaderConfigurationTest extends Elasticsearc
                 .setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL);
 
         for (TestDomain expectedItem : expectedItems) {
-            IndexRequest indexRequest = new IndexRequest(indexName)
+            IndexRequest indexRequest = new IndexRequest(TEST_INDEX_NAME)
                     .source(objectMapper.writeValueAsString(expectedItem), XContentType.JSON);
             bulkRequest.add(indexRequest);
         }
@@ -61,7 +59,7 @@ public class ElasticsearchPagingItemReaderConfigurationTest extends Elasticsearc
         // when
         JobExecution jobExecution = jobLauncherTestUtils.launchJob(jobParameters);
 
-        SearchRequest searchRequest = new SearchRequest(migratedIndexName)
+        SearchRequest searchRequest = new SearchRequest(TEST_MIGRATION_INDEX_NAME)
                 .source(
                         SearchSourceBuilder
                                 .searchSource()

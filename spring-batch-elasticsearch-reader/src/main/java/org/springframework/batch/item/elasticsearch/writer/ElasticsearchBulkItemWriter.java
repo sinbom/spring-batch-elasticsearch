@@ -24,10 +24,7 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
 
     private final RestHighLevelClient restHighLevelClient;
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper;
 
     private final Class<T> domainClass;
 
@@ -38,18 +35,34 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
     private boolean waitUntil;
 
     public ElasticsearchBulkItemWriter(RestHighLevelClient restHighLevelClient, Class<T> domainClass, String index) {
+        this(
+                restHighLevelClient,
+                new ObjectMapper()
+                        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                        .registerModule(new JavaTimeModule()),
+                domainClass,
+                index
+        );
+    }
+
+    public ElasticsearchBulkItemWriter(RestHighLevelClient restHighLevelClient, ObjectMapper objectMapper,
+                                       Class<T> domainClass, String index) {
         this.restHighLevelClient = restHighLevelClient;
         this.domainClass = domainClass;
+        this.objectMapper = objectMapper;
         this.index = index;
     }
 
     public ElasticsearchBulkItemWriter<T> timeoutMillis(long timeOutMillis) {
         this.timeout = TimeValue.timeValueMillis(timeOutMillis);
+
         return this;
     }
 
     public ElasticsearchBulkItemWriter<T> waitUntil(boolean waitUntil) {
         this.waitUntil = waitUntil;
+
         return this;
     }
 
@@ -67,7 +80,6 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
             }
 
             for (T item : items) {
-                objectMapper.writeValueAsString(item);
                 IndexRequest indexRequest = new IndexRequest(index)
                         .source(objectMapper.writeValueAsString(item), XContentType.JSON);
                 bulkRequest.add(indexRequest);

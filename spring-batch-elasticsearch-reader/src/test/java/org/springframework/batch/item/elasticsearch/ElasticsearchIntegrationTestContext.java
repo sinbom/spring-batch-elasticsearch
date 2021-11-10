@@ -30,4 +30,6 @@ public abstract class ElasticsearchIntegrationTestContext extends ElasticsearchT
     @Autowired
     protected JobLauncherTestUtils jobLauncherTestUtils;
 
+    protected final String TEST_MIGRATION_INDEX_NAME = "test_migration";
+
 }

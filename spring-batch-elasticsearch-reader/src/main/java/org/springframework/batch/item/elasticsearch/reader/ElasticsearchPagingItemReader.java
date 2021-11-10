@@ -25,10 +25,7 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
     private final SearchSourceBuilder searchSourceBuilder;
 
-    private final ObjectMapper objectMapper = new ObjectMapper()
-            .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
-            .registerModule(new JavaTimeModule());
+    private final ObjectMapper objectMapper;
 
     private final Class<T> domainClass;
 
@@ -38,10 +35,25 @@ public class ElasticsearchPagingItemReader<T> extends AbstractPagingItemReader<T
 
     public ElasticsearchPagingItemReader(RestHighLevelClient restHighLevelClient, SearchSourceBuilder searchSourceBuilder,
                                          Class<T> domainClass, String... indices) {
+        this(
+                restHighLevelClient,
+                searchSourceBuilder,
+                new ObjectMapper()
+                        .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
+                        .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+                        .registerModule(new JavaTimeModule()),
+                domainClass,
+                indices
+        );
+    }
+
+    public ElasticsearchPagingItemReader(RestHighLevelClient restHighLevelClient, SearchSourceBuilder searchSourceBuilder,
+                                         ObjectMapper objectMapper, Class<T> domainClass, String... indices) {
         setName(ClassUtils.getShortName(getClass()));
         setPageSize(searchSourceBuilder.size());
         this.restHighLevelClient = restHighLevelClient;
         this.searchSourceBuilder = searchSourceBuilder;
+        this.objectMapper = objectMapper;
         this.domainClass = domainClass;
         this.indices = indices;
     }

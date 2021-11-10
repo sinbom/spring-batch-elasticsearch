@@ -5,6 +5,8 @@ import org.elasticsearch.action.admin.indices.delete.DeleteIndexRequest;
 import org.elasticsearch.action.support.master.AcknowledgedResponse;
 import org.elasticsearch.client.RequestOptions;
 import org.elasticsearch.client.RestHighLevelClient;
+import org.elasticsearch.client.indices.CreateIndexRequest;
+import org.elasticsearch.client.indices.CreateIndexResponse;
 import org.elasticsearch.client.indices.PutIndexTemplateRequest;
 import org.elasticsearch.common.xcontent.XContentBuilder;
 import org.elasticsearch.common.xcontent.XContentFactory;
@@ -29,6 +31,8 @@ public abstract class ElasticsearchTestContext {
 
     @Autowired
     protected ObjectMapper objectMapper;
+
+    protected final String TEST_INDEX_NAME = "test";
 
     @BeforeAll
     public static void putIndexTemplate(@Autowired RestHighLevelClient restHighLevelClient) throws IOException {
@@ -59,13 +63,19 @@ public abstract class ElasticsearchTestContext {
     }
 
     @BeforeEach
-    public void deleteAllIndices() throws IOException {
+    public void deleteAllAndCreateTestIndex() throws IOException {
         DeleteIndexRequest deleteIndexRequest = new DeleteIndexRequest("*");
-        AcknowledgedResponse delete = restHighLevelClient
+        AcknowledgedResponse acknowledgedResponse = restHighLevelClient
                 .indices()
                 .delete(deleteIndexRequest, RequestOptions.DEFAULT);
 
-        assertTrue(delete.isAcknowledged());
+        CreateIndexRequest createIndexRequest = new CreateIndexRequest(TEST_INDEX_NAME);
+        CreateIndexResponse createIndexResponse = restHighLevelClient
+                .indices()
+                .create(createIndexRequest, RequestOptions.DEFAULT);
+
+        assertTrue(acknowledgedResponse.isAcknowledged());
+        assertTrue(createIndexResponse.isAcknowledged());
     }
 
 }
