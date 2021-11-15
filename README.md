@@ -75,3 +75,16 @@ public ItemWriter<Domain> writer() {
 }
 ```
 
+### Logging
+
+```yaml
+logging:
+  level:
+    org:
+      springframework:
+        batch:
+          item:
+            elasticsearch:
+              reader: DEBUG
+              writer: DEBUG
+```
