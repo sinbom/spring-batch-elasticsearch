@@ -4,7 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.elasticsearch.ElasticsearchException;
+import org.elasticsearch.action.DocWriteResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.index.IndexRequest;
@@ -18,9 +21,12 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, InitializingBean {
+
+    protected Log logger = LogFactory.getLog(getClass());
 
     private final RestHighLevelClient restHighLevelClient;
 
@@ -68,16 +74,12 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
 
     @Override
     public void write(List<? extends T> items) throws Exception {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Writing " + items.size() + " items");
+        }
+
         if (!CollectionUtils.isEmpty(items)) {
-            BulkRequest bulkRequest = new BulkRequest();
-
-            if (timeout != null) {
-                bulkRequest.timeout(timeout);
-            }
-
-            if (waitUntil) {
-                bulkRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL);
-            }
+            BulkRequest bulkRequest = createBulkRequest();
 
             for (T item : items) {
                 IndexRequest indexRequest = new IndexRequest(index)
@@ -91,6 +93,15 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
             if (bulkResponse.hasFailures()) {
                 throw new ElasticsearchException("Bulk response includes failure writing.");
             }
+            if (logger.isDebugEnabled()) {
+                long createCount = Arrays
+                        .stream(bulkResponse.getItems())
+                        .filter(item -> item.getResponse().getResult() == DocWriteResponse.Result.CREATED)
+                        .count();
+
+                logger.debug(createCount + " documents created");
+                logger.debug(items.size() - createCount + " documents updated");
+            }
         }
     }
 
@@ -99,6 +110,19 @@ public class ElasticsearchBulkItemWriter<T> implements ItemWriter<T>, Initializi
         Assert.notNull(restHighLevelClient, "restHighLevelClient is must be not null");
         Assert.notNull(domainClass, "domain class is must be not null");
         Assert.hasText(index, "index name is must not be null or empty");
+    }
+
+    protected BulkRequest createBulkRequest() {
+        BulkRequest bulkRequest = new BulkRequest();
+
+        if (timeout != null) {
+            bulkRequest.timeout(timeout);
+        }
+        if (waitUntil) {
+            bulkRequest.setRefreshPolicy(WriteRequest.RefreshPolicy.WAIT_UNTIL);
+        }
+
+        return bulkRequest;
     }
 
 }
